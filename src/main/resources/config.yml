@@ -1,0 +1,22 @@
+messages:
+  en-us:
+    cookie_set: 'Your cookie has been set'
+    no_cookie: 'You don''t set auth cookie'
+    uid_set: 'Your uid has been set'
+    authkey_set: 'Your auth key has been set'
+
+    daily_checkin_title: 'Genshin Impact Daily check-in'
+    daily_checkin_description: |-
+      **Daily Reward statistics**
+       • Total sign day: %total_sign_day%
+       • Today claim: %today_claim%
+       • Server: %server%
+      
+      **Reward Info**
+       • Today reward: %today_name% x%today_amount%
+       • Auto claim: %auto%
+    daily_checkin_claim: 'Genshin Impact > Daily check-in reward: %name% x%amount% | %tag%'
+    daily_checkin_error: 'Genshin Impact > Daily check-in error: %error% | %tag%'
+    daily_checkin_turn_on: 'Genshin Impact > Auto check-in turn on | %tag%'
+    daily_checkin_turn_off: 'Genshin Impact > Auto check-in turn off | %tag%'
+    daily_checkin_not_action: 'You can not perform this action | %tag%'

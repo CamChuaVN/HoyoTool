@@ -1,0 +1,8 @@
+{
+  "name": "GenshinImpactTool",
+  "description": "GenshinImpactTool for DiscordBot",
+  "version": "1.0",
+
+  "mainClass": "camchua.genshinimpacttool.GenshinImpactTool",
+  "authors": ["CamChua_VN"]
+}
