@@ -2,11 +2,10 @@ package camchua.genshinimpacttool.buttonlistener;
 
 import camchua.discordbot.data.UserData;
 import camchua.genshinimpacttool.GenshinImpactTool;
-import camchua.genshinimpacttool.dailycheckin.DailyCheckIn;
 import camchua.genshinimpacttool.dailycheckin.model.CheckIn;
 import camchua.genshinimpacttool.dailycheckin.model.CheckInUser;
 import camchua.genshinimpacttool.utils.Messages;
-import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.util.HashMap;
@@ -20,7 +19,7 @@ public class DailyCheckinListener extends ListenerAdapter {
     }
 
     @Override
-    public void onButtonClick(ButtonClickEvent event) {
+    public void onButtonInteraction(ButtonInteractionEvent event) {
         String user_id = event.getUser().getId();
 
         String ltuid = UserData.getString(user_id, tool.getName() + "\\data", "ltuid");

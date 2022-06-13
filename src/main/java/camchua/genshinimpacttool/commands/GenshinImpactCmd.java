@@ -8,15 +8,11 @@ import camchua.genshinimpacttool.GenshinImpactTool;
 import camchua.genshinimpacttool.dailycheckin.model.CheckInUser;
 import camchua.genshinimpacttool.utils.Messages;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
-import net.dv8tion.jda.api.interactions.components.Button;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -132,7 +128,7 @@ public class GenshinImpactCmd extends DiscordCommandExecutor {
                 buttons.add(Button.primary("dailycheckin_claim:" + user_id, "Claim"));
                 buttons.add(Button.primary("dailycheckin_autoclaim:" + user_id, "Auto Claim"));
 
-                event.getMessage().reply(eb.build()).setActionRow(buttons).queue();
+                event.getMessage().replyEmbeds(eb.build()).setActionRow(buttons).queue();
                 return;
             }
 
