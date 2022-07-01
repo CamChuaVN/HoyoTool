@@ -1,8 +1,9 @@
 messages:
   en-us:
     cookie_set: 'Your cookie has been set'
-    no_cookie: 'You don''t set auth cookie'
+    no_cookie: 'You don''t set your cookie'
     uid_set: 'Your uid has been set'
+    no_uid: 'You don''t set your uid'
     authkey_set: 'Your auth key has been set'
 
     daily_checkin_title: 'Genshin Impact Daily check-in'
@@ -19,4 +20,29 @@ messages:
     daily_checkin_error: 'Genshin Impact > Daily check-in error: %error% | %tag%'
     daily_checkin_turn_on: 'Genshin Impact > Auto check-in turn on | %tag%'
     daily_checkin_turn_off: 'Genshin Impact > Auto check-in turn off | %tag%'
-    daily_checkin_not_action: 'You can not perform this action | %tag%'
+    daily_checkin_not_action: 'Genshin Impact > You can not perform this action | %tag%'
+
+    mycharacter_title: 'Genshin Impact Character Info'
+    mycharacter_description: |-
+      **Information**
+       • Name: %name%
+       • Element: %element%
+       • Rarity: %rarity%★
+       • Level: %level%
+       • Fetter level: %fetter_level%
+       • Constellations: %constellations%
+      
+      **Weapon Equipment**
+       • Name: %weapon_name%
+       • Level: %weapon_level%
+       • Rarity: %weapon_rarity%★
+       • Refine: %weapon_refine%
+      
+      **Reliquaries Equipment**
+       • %r1_name% Lv.%r1_level%
+       • %r2_name% Lv.%r2_level%
+       • %r3_name% Lv.%r3_level%
+       • %r4_name% Lv.%r4_level%
+       • %r5_name% Lv.%r5_level%
+    mycharacter_require_input: 'Genshin Impact > You need type character name'
+    mycharacter_no_char: 'Genshin Impact > Cannot find your character'

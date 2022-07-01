@@ -30,6 +30,8 @@ public class DailyCheckinListener extends ListenerAdapter {
         String component = event.getComponentId().split(":")[0];
         String author_id = event.getComponentId().split(":")[1];
 
+        if(!component.startsWith("dailycheckin_")) return;
+
         if(!user_id.equals(author_id)) {
             String msg = Messages.get("daily_checkin_not_action", user_id, null);
             event.reply(msg).queue();
