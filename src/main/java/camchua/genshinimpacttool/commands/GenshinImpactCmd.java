@@ -5,7 +5,6 @@ import camchua.discordbot.data.UserData;
 import camchua.discordbot.discord.DiscordCommandExecutor;
 import camchua.discordbot.discord.DiscordSender;
 import camchua.genshinimpactapi.GenshinImpact;
-import camchua.genshinimpactapi.GenshinImpactAPI;
 import camchua.genshinimpactapi.data.user.model.Avatar;
 import camchua.genshinimpactapi.data.user.model.Player;
 import camchua.genshinimpactapi.data.user.model.item.Reliquaries;
@@ -16,7 +15,6 @@ import camchua.genshinimpacttool.utils.Messages;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import java.util.ArrayList;

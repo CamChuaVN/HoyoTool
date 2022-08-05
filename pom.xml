@@ -32,7 +32,7 @@
             <artifactId>DiscordBot</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>C:/Users/CamChua_VN/eclipse-workspace/DiscordBot/target/DiscordBot-1.0-dev.jar</systemPath>
+            <systemPath>${project.basedir}/lib/DiscordBot-1.0-dev.jar</systemPath>
         </dependency>
     </dependencies>
 

@@ -2,13 +2,11 @@ package camchua.genshinimpacttool;
 
 import camchua.discordbot.DiscordBot;
 import camchua.discordbot.discord.DiscordCommandExecutor;
-import camchua.discordbot.event.DiscordEvent;
 import camchua.discordbot.plugin.api.DiscordPlugin;
 import camchua.genshinimpacttool.buttonlistener.DailyCheckinListener;
 import camchua.genshinimpacttool.commands.GenshinImpactCmd;
 import camchua.genshinimpacttool.dailycheckin.DailyCheckIn;
 import camchua.genshinimpacttool.dailycheckin.model.CheckReward;
-import camchua.genshinimpacttool.listener.PacketReceiveListener;
 import camchua.genshinimpacttool.manager.FileManager;
 import camchua.genshinimpacttool.tasks.AutoClaimTask;
 
@@ -52,7 +50,6 @@ public class GenshinImpactTool extends DiscordPlugin {
     private void regEvent() {
         DiscordBot.getBot().addEventListener(new DailyCheckinListener(this));
 
-        new PacketReceiveListener(this).registerEvent();
     }
 
     private void regTask() {
