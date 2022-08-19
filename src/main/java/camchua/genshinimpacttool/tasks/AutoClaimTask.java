@@ -1,17 +1,16 @@
 package camchua.genshinimpacttool.tasks;
 
 import camchua.discordbot.DiscordBot;
-import camchua.discordbot.data.UserData;
+import camchua.discordbot.manager.DataBaseManager;
 import camchua.discordbot.utils.DiscordUtils;
 import camchua.genshinimpacttool.GenshinImpactTool;
 import camchua.genshinimpacttool.dailycheckin.model.CheckIn;
 import camchua.genshinimpacttool.dailycheckin.model.CheckInUser;
-import camchua.genshinimpacttool.utils.Messages;
+import net.dv8tion.jda.api.EmbedBuilder;
 
-import java.lang.reflect.GenericArrayType;
+import java.sql.ResultSet;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.TimerTask;
 
 public class AutoClaimTask extends TimerTask {
@@ -29,37 +28,60 @@ public class AutoClaimTask extends TimerTask {
         Date d = Calendar.getInstance().getTime();
         for(int hour : check_time) {
             if(d.getHours() == hour && d.getMinutes() == 0 && d.getSeconds() == 0) {
-                for(String user_id : UserData.listId()) {
-                    boolean auto = UserData.get(user_id, tool.getName() + "\\daily_checkin").getBoolean("auto", false);
-                    if(!auto) continue;
+                DataBaseManager dataBase = DiscordBot.getDataBaseManager();
+                dataBase.createTable("GITool_dailycheckin", "userId CHAR(64), auto BOOL");
+                String execute = "SELECT * FROM GITool_dailycheckin";
+                ResultSet result = dataBase.runStatementQuery(execute);
+                try {
+                    while(result.next()) {
+                        String userId = result.getString("userId");
+                        boolean auto = result.getBoolean("auto");
+                        if(!auto) continue;
 
-                    String ltuid = UserData.getString(user_id, tool.getName() + "\\data", "ltuid");
-                    String ltoken = UserData.getString(user_id, tool.getName() + "\\data", "ltoken");
-                    if(ltuid.isEmpty() && ltoken.isEmpty()) continue;
+                        String ltuid = "", ltoken = "";
 
-                    try {
-                        CheckInUser user = tool.getDailyCheckIn().getUser(ltuid, ltoken);
-                        CheckIn check = user.checkIn();
-
-                        if(!check.isSuccess()) {
-                            if(check.getCode() != -5003) {
-                                String msg = Messages.get("daily_checkin_error", user_id, null);
-                                DiscordUtils.sendPrivateMessage(user_id, msg.replace("%error%", check.getMessage()));
+                        dataBase.createTable("GITool_data", "userId CHAR(64), ltuid CHAR(64), ltoken CHAR(64), uid CHAR(64), authkey VARCHAR(255)");
+                        execute = "SELECT * FROM GITool_data WHERE userId='" + userId + "';";
+                        ResultSet result2 = dataBase.runStatementQuery(execute);
+                        try {
+                            while(result2.next()) {
+                                ltuid = result2.getString("ltuid"); if(ltuid == null) ltuid = "";
+                                ltoken = result2.getString("ltoken"); if(ltoken == null) ltoken = "";
+                                break;
                             }
-                            continue;
+                        } catch(Exception e) { continue; }
+                        if(ltuid.isEmpty() && ltoken.isEmpty()) continue;
+
+                        try {
+                            CheckInUser user = tool.getDailyCheckIn().getUser(ltuid, ltoken);
+                            CheckIn check = user.checkIn();
+
+                            if(!check.isSuccess()) {
+                                if(check.getCode() != -5003) {
+                                    String msg = "Daily check-in error: " + check.getMessage();
+                                    DiscordUtils.sendPrivateMessage(userId, msg);
+                                }
+                                continue;
+                            }
+
+                            String message =
+                                    "**Daily Check-in Reward**\n" +
+                                    " • Item: " + check.getName() + "\n" +
+                                    " • Amount: " + check.getAmount();
+
+                            EmbedBuilder eb = new EmbedBuilder();
+                            eb.setColor(DiscordBot.getSettings().getColor());
+                            eb.setTitle(DiscordBot.getSettings().getBotName());
+                            eb.setDescription(message);
+                            eb.setThumbnail(check.getIconUrl());
+
+                            DiscordUtils.sendPrivateMessage(userId, eb.build());
+                        } catch(Exception e) {
+                            String msg = "Daily check-in error: " + e.getMessage();
+                            DiscordUtils.sendPrivateMessage(userId, msg);
                         }
-
-                        HashMap<String, String> replace = new HashMap<>();
-                        replace.put("%name%", check.getName());
-                        replace.put("%amount%", String.valueOf(check.getAmount()));
-                        String msg = Messages.get("daily_checkin_claim", user_id, replace);
-
-                        DiscordUtils.sendPrivateMessage(user_id, msg);
-                    } catch(Exception e) {
-                        String msg = Messages.get("daily_checkin_error", user_id, null);
-                        DiscordUtils.sendPrivateMessage(user_id, msg.replace("%error%", e.getMessage()));
                     }
-                }
+                } catch(Exception e) {}
             }
         }
     }

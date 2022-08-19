@@ -5,20 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>camchua.genshinimpacttool</groupId>
-    <artifactId>GenshinImpactTool</artifactId>
+    <artifactId>GITool</artifactId>
     <version>1.0</version>
-    <name>GenshinImpactTool</name>
-
-    <repositories>
-        <repository>
-            <id>GenshinImpactAPI-mvn-repo</id>
-            <url>https://raw.github.com/CamChuaVN/GenshinImpactAPI/mvn-repo/</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-        </repository>
-    </repositories>
+    <name>GITool</name>
 
     <dependencies>
         <dependency>

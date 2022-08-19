@@ -1,14 +1,15 @@
 package camchua.genshinimpacttool.buttonlistener;
 
-import camchua.discordbot.data.UserData;
+import camchua.discordbot.DiscordBot;
+import camchua.discordbot.manager.DataBaseManager;
 import camchua.genshinimpacttool.GenshinImpactTool;
 import camchua.genshinimpacttool.dailycheckin.model.CheckIn;
 import camchua.genshinimpacttool.dailycheckin.model.CheckInUser;
-import camchua.genshinimpacttool.utils.Messages;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-import java.util.HashMap;
+import java.sql.ResultSet;
 
 public class DailyCheckinListener extends ListenerAdapter {
 
@@ -20,20 +21,35 @@ public class DailyCheckinListener extends ListenerAdapter {
 
     @Override
     public void onButtonInteraction(ButtonInteractionEvent event) {
-        String user_id = event.getUser().getId();
-
-        String ltuid = UserData.getString(user_id, tool.getName() + "\\data", "ltuid");
-        String ltoken = UserData.getString(user_id, tool.getName() + "\\data", "ltoken");
-        String uid = UserData.getString(user_id, tool.getName() + "\\data", "uid");
-        String authKey = UserData.getString(user_id, tool.getName() + "\\data", "auth_key");
+        String userId = event.getUser().getId();
 
         String component = event.getComponentId().split(":")[0];
         String author_id = event.getComponentId().split(":")[1];
 
         if(!component.startsWith("dailycheckin_")) return;
 
-        if(!user_id.equals(author_id)) {
-            String msg = Messages.get("daily_checkin_not_action", user_id, null);
+        if(!userId.equals(author_id)) {
+            String msg = "You cannot perform this action | " + event.getUser().getAsMention();
+            event.reply(msg).queue();
+            return;
+        }
+
+        String ltuid = "", ltoken = "", uid = "", authKey = "";
+
+        DataBaseManager dataBase = DiscordBot.getDataBaseManager();
+        dataBase.createTable("GITool_data", "userId CHAR(64), ltuid CHAR(64), ltoken CHAR(64), uid CHAR(64), authkey VARCHAR(255)");
+        String execute = "SELECT * FROM GITool_data WHERE userId='" + userId + "';";
+        ResultSet result = dataBase.runStatementQuery(execute);
+        try {
+            while(result.next()) {
+                ltuid = result.getString("ltuid"); if(ltuid == null) ltuid = "";
+                ltoken = result.getString("ltoken"); if(ltoken == null) ltoken = "";
+                uid = result.getString("uid"); if(uid == null) uid = "";
+                authKey = result.getString("authkey"); if(authKey == null) authKey = "";
+                break;
+            }
+        } catch(Exception e) {
+            String msg = "Fetch database failed. Exception: " + e.getMessage() + " | " + event.getUser().getAsMention();
             event.reply(msg).queue();
             return;
         }
@@ -45,35 +61,57 @@ public class DailyCheckinListener extends ListenerAdapter {
                     CheckIn check = user.checkIn();
 
                     if(!check.isSuccess()) {
-                        String msg = Messages.get("daily_checkin_error", user_id, null);
-                        event.reply(msg.replace("%error%", check.getMessage())).queue();
+                        String msg = "Daily check-in error: " + check.getMessage() + " | " + event.getUser().getAsMention();
+                        event.reply(msg).queue();
                         return;
                     }
 
-                    HashMap<String, String> replace = new HashMap<>();
-                    replace.put("%name%", check.getName());
-                    replace.put("%amount%", String.valueOf(check.getAmount()));
-                    String msg = Messages.get("daily_checkin_claim", user_id, replace);
+                    String message =
+                            "**Daily Check-in Reward**\n" +
+                            " • Item: " + check.getName() + "\n" +
+                            " • Amount: " + check.getAmount() + "\n" +
+                            " • Receiver: " + event.getUser().getAsMention();
 
-                    event.reply(msg).queue();
-                    return;
+                    EmbedBuilder eb = new EmbedBuilder();
+                    eb.setColor(DiscordBot.getSettings().getColor());
+                    eb.setTitle(DiscordBot.getSettings().getBotName());
+                    eb.setDescription(message);
+                    eb.setFooter(event.getUser().getAsTag(), event.getUser().getAvatarUrl());
+                    eb.setThumbnail(check.getIconUrl());
+
+                    event.replyEmbeds(eb.build()).queue();
                 } catch(Exception e) {
-                    String msg = Messages.get("daily_checkin_error", user_id, null);
-                    event.reply(msg.replace("%error%", e.getMessage())).queue();
-                    return;
+                    String msg = "Daily check-in error: " + e.getMessage() + " | " + event.getUser().getAsMention();
+                    event.reply(msg).queue();
                 }
             }
 
             case "dailycheckin_autoclaim" -> {
-                boolean auto = UserData.get(user_id, tool.getName() + "\\daily_checkin").getBoolean("auto", false);
+                boolean auto = false;
+                dataBase = DiscordBot.getDataBaseManager();
+                dataBase.createTable("GITool_dailycheckin", "userId CHAR(64), auto BOOL");
+                execute = "SELECT * FROM GITool_dailycheckin WHERE userId='" + userId + "';";
+                result = dataBase.runStatementQuery(execute);
+                try {
+                    while(result.next()) {
+                        auto = result.getBoolean("auto");
+                        break;
+                    }
+                } catch(Exception e) {
+                    String msg = "Fetch database failed. Exception: " + e.getMessage() + " | " + event.getUser().getAsMention();
+                    event.reply(msg).queue();
+                    return;
+                }
 
                 if(auto) {
-                    UserData.set(user_id, tool.getName() + "\\daily_checkin", "auto", false);
-                    String msg = Messages.get("daily_checkin_turn_off", user_id, null);
+                    dataBase.runStatement("DELETE FROM GITool_dailycheckin WHERE userId='" + userId + "';");
+                    dataBase.runStatement("INSERT INTO GITool_dailycheckin(userId, auto) VALUES('" + userId + "', 0);");
+                    String msg = "Auto check-in turn off | " + event.getUser().getAsMention();
                     event.reply(msg).queue();
                 } else {
-                    UserData.set(user_id, tool.getName() + "\\daily_checkin", "auto", true);
-                    String msg = Messages.get("daily_checkin_turn_on", user_id, null);
+                    dataBase.runStatement("DELETE FROM GITool_dailycheckin WHERE userId='" + userId + "';");
+                    dataBase.runStatement("INSERT INTO GITool_dailycheckin(userId, auto) VALUES('" + userId + "', 1);");
+                    String msg = "Auto check-in turn on | " + event.getUser().getAsMention();
                     event.reply(msg).queue();
                 }
 
@@ -82,18 +120,22 @@ public class DailyCheckinListener extends ListenerAdapter {
                     CheckIn check = user.checkIn();
 
                     if(check.isSuccess()) {
-                        HashMap<String, String> replace = new HashMap<>();
-                        replace.put("%name%", check.getName());
-                        replace.put("%amount%", String.valueOf(check.getAmount()));
-                        String msg = Messages.get("daily_checkin_claim", user_id, replace);
+                        String message =
+                                "**Daily Check-in Reward**\n" +
+                                        " • Item: " + check.getName() + "\n" +
+                                        " • Amount: " + check.getAmount() + "\n" +
+                                        " • Receiver: " + event.getUser().getAsMention();
 
-                        event.reply(msg).queue();
+                        EmbedBuilder eb = new EmbedBuilder();
+                        eb.setColor(DiscordBot.getSettings().getColor());
+                        eb.setTitle(DiscordBot.getSettings().getBotName());
+                        eb.setDescription(message);
+                        eb.setFooter(event.getUser().getAsTag(), event.getUser().getAvatarUrl());
+                        eb.setThumbnail(check.getIconUrl());
+
+                        event.replyEmbeds(eb.build()).queue();
                     }
-                } catch(Exception e) {
-
-                }
-
-                return;
+                } catch(Exception e) {}
             }
         }
     }

@@ -1,17 +1,16 @@
 package camchua.genshinimpacttool;
 
 import camchua.discordbot.DiscordBot;
-import camchua.discordbot.discord.DiscordCommandExecutor;
+import camchua.discordbot.command.Command;
+import camchua.discordbot.command.CommandMap;
 import camchua.discordbot.plugin.api.DiscordPlugin;
 import camchua.genshinimpacttool.buttonlistener.DailyCheckinListener;
 import camchua.genshinimpacttool.commands.GenshinImpactCmd;
 import camchua.genshinimpacttool.dailycheckin.DailyCheckIn;
 import camchua.genshinimpacttool.dailycheckin.model.CheckReward;
-import camchua.genshinimpacttool.manager.FileManager;
 import camchua.genshinimpacttool.tasks.AutoClaimTask;
 
 import java.lang.reflect.Constructor;
-import java.util.Arrays;
 import java.util.Timer;
 
 public class GenshinImpactTool extends DiscordPlugin {
@@ -25,7 +24,6 @@ public class GenshinImpactTool extends DiscordPlugin {
         regCmd();
         regEvent();
         regTask();
-        FileManager.setup(this);
     }
 
 
@@ -44,7 +42,9 @@ public class GenshinImpactTool extends DiscordPlugin {
     }
 
     private void regCmd() {
-        DiscordCommandExecutor.registerCommand("genshinimpact", new GenshinImpactCmd(this), Arrays.asList("genshin", "gi"));
+        CommandMap commandMap = DiscordBot.getCommandMap();
+
+        commandMap.registerCommand(this, GenshinImpactCmd.class.getAnnotation(Command.class).command(), new GenshinImpactCmd(this));
     }
 
     private void regEvent() {
@@ -54,7 +54,6 @@ public class GenshinImpactTool extends DiscordPlugin {
 
     private void regTask() {
         Timer timer = new Timer();
-
         timer.scheduleAtFixedRate(new AutoClaimTask(this), 1000, 1000);
     }
 
