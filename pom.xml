@@ -4,15 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>camchua.genshinimpacttool</groupId>
-    <artifactId>GITool</artifactId>
+    <groupId>camchua.hoyotool</groupId>
+    <artifactId>HoyoTool</artifactId>
     <version>1.0</version>
-    <name>GITool</name>
+    <name>HoyoTool</name>
 
     <dependencies>
         <dependency>
-            <groupId>camchua.genshinimpactapi</groupId>
-            <artifactId>GenshinImpactAPI</artifactId>
+            <groupId>camchua.hoyoapi</groupId>
+            <artifactId>HoyoAPI</artifactId>
             <version>1.0</version>
         </dependency>
 
@@ -48,7 +48,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>camchua.genshinimpacttool.GenshinImpactTool</mainClass>
+                            <mainClass>camchua.hoyotool.GenshinImpactTool</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -68,7 +68,7 @@
 
 
     <properties>
-        <start-class>camchua.genshinimpacttool.GenshinImpactTool</start-class>
+        <start-class>camchua.hoyotool.GenshinImpactTool</start-class>
         <maven.compiler.source>16</maven.compiler.source>
         <maven.compiler.target>16</maven.compiler.target>
 

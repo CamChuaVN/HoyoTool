@@ -1,8 +1,8 @@
 {
-  "name": "GITool",
-  "description": "GenshinImpactTool for DiscordBot",
+  "name": "HoyoTool",
+  "description": "HoyoTool for DiscordBot",
   "version": "1.0",
 
-  "mainClass": "camchua.genshinimpacttool.GenshinImpactTool",
+  "mainClass": "camchua.hoyotool.HoyoTool",
   "authors": ["CamChua_VN"]
 }
