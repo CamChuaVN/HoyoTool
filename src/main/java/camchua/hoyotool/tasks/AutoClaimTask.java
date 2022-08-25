@@ -45,12 +45,12 @@ public class AutoClaimTask extends TimerTask {
                         ResultSet result2 = dataBase.runStatementQuery(execute);
                         try {
                             while(result2.next()) {
-                                ltuid = result.getString("ltuid"); if(ltuid == null) ltuid = "";
-                                ltoken = result.getString("ltoken"); if(ltoken == null) ltoken = "";
-                                cookie_token = result.getString("cookie_token"); if(cookie_token == null) cookie_token = "";
+                                ltuid = result2.getString("ltuid"); if(ltuid == null) ltuid = "";
+                                ltoken = result2.getString("ltoken"); if(ltoken == null) ltoken = "";
+                                cookie_token = result2.getString("cookie_token"); if(cookie_token == null) cookie_token = "";
                                 break;
                             }
-                        } catch(Exception e) { continue; }
+                        } catch(Exception e) { e.printStackTrace(); continue; }
                         if(ltuid.isEmpty() && ltoken.isEmpty() && cookie_token.isEmpty()) continue;
 
                         try {
@@ -82,7 +82,7 @@ public class AutoClaimTask extends TimerTask {
                             DiscordUtils.sendPrivateMessage(userId, msg);
                         }
                     }
-                } catch(Exception e) {}
+                } catch(Exception e) { e.printStackTrace(); }
             }
         }
     }
